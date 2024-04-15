@@ -11,10 +11,10 @@ export const createUser = async (data) => {
           message: "User already exist.",
           row: userData,
         });
+      } else {
+        const saved = await userData.save();
+        resolve(saved);
       }
-
-      const saved = await userData.save();
-      resolve(saved);
     } catch (error) {
       reject(error);
     }
@@ -28,14 +28,16 @@ export const fetchUser = async (data) => {
       const { email, name } = userData;
       const userExist = await User.findOne({ email, name });
       if (!userExist) {
+        console.log("userData:", userData);
         reject({
+          code: 0,
           message: "User not found.",
           row: userData,
         });
-      }
-      resolve({ message: "User already exist.", row: userExist });
+      } else
+        resolve({ code: 1, message: "User already exist.", row: userExist });
     } catch (error) {
-      reject(error);
+      reject({ code: 2, error: error });
     }
   });
 };
