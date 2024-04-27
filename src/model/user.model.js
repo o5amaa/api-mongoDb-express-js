@@ -26,11 +26,15 @@ const userSchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    required: true,
+    required: false,
   },
   url: {
     type: String,
-    required: true,
+    required: false,
+  },
+  path: {
+    type: String,
+    required: false,
   },
 });
 

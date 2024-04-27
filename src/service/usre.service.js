@@ -41,3 +41,52 @@ export const fetchUser = async (data) => {
     }
   });
 };
+
+export const uploadFile = async (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { userId } = data.body;
+      const { file } = data.file;
+
+      console.log("User Id:", userId);
+
+      const userExist = await getUserById(userId);
+
+      if (!userExist) {
+        reject({
+          code: 0,
+          message: "User not found.",
+          row: userExist,
+        });
+      } else {
+        await User.updateOne(
+          { _id: userId },
+          {
+            url: data.file.destination,
+            image: data.file.filename,
+            path: data.file.path,
+          }
+        );
+
+        resolve({
+          code: 1,
+          message: "User already exists.",
+          // request: { File: data.file, Body: data.body },
+          row: await getUserById(userId),
+        });
+      }
+    } catch (error) {
+      reject({ code: 2, error: error });
+    }
+  });
+};
+
+const getUserById = async (id) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      resolve(await User.findOne({ _id: id }));
+    } catch (error) {
+      reject({ code: 2, error: error });
+    }
+  });
+};
